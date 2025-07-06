@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "199848539711",
+    "project_id": "sugam-f0569",
+    "storage_bucket": "sugam-f0569.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199848539711:android:efc7f9d4a44735aaffaa8a",
+        "android_client_info": {
+          "package_name": "com.sugum.pdf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3We524Q9Gd3iuzhrKQJ9w_vHLn-vDhiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
