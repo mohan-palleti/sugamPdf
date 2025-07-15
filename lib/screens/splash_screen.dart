@@ -34,18 +34,37 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: FadeTransition(
-          opacity: _animation,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.picture_as_pdf, size: 80, color: Colors.deepPurple),
-              const SizedBox(height: 24),
-              const Text('PDF Utility', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              const CircularProgressIndicator(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 58, 164, 183),
+              const Color.fromARGB(255, 64, 117, 251),
             ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: FadeTransition(
+            opacity: _animation,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.picture_as_pdf, size: 100, color: Colors.white),
+                const SizedBox(height: 24),
+                const Text(
+                  'All Document Reader',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const CircularProgressIndicator(color: Colors.white),
+              ],
+            ),
           ),
         ),
       ),
