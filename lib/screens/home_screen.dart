@@ -37,9 +37,15 @@ class _FeatureTile extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 48, color: Colors.deepPurple),
+              Icon(icon, size: 48, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 12),
-              Text(title, style: const TextStyle(fontSize: 16)),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
         ),

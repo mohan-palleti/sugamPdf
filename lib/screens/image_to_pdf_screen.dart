@@ -35,7 +35,12 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
         _resultPath = pdf.path;
         _loading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PDF saved: ${pdf.path}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('PDF saved: ${pdf.path}'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
+      );
     } catch (e) {
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to convert images')));

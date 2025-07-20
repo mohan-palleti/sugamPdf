@@ -45,7 +45,16 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                 child: ListView(
                   children: [
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Name'),
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                        ),
+                      ),
                       validator: (v) => v == null || v.isEmpty ? 'Enter name' : null,
                       onSaved: (v) => _name = v,
                     ),

@@ -34,7 +34,12 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
         _resultPath = merged.path;
         _loading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Merged PDF saved: ${merged.path}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Merged PDF saved: ${merged.path}'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
+      );
     } catch (e) {
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to merge PDFs')));

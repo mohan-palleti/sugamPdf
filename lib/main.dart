@@ -19,14 +19,45 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  static final ThemeData globalTheme = ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.light(
+      primary: Color(0xFF2E6F40),     // Dark green
+      secondary: Color(0xFF68BA7F),    // Medium green
+      surface: Color(0xFFCFFFDC),      // Light mint
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: Colors.black87,
+    ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: Color(0xFF2E6F40),
+      foregroundColor: Colors.white,
+      elevation: 0,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color(0xFF68BA7F),
+        foregroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ),
+    cardTheme: CardThemeData(
+      color: Color(0xFFCFFFDC),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PDF Utility',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: globalTheme,
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),

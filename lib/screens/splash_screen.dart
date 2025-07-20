@@ -38,8 +38,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 58, 164, 183),
-              const Color.fromARGB(255, 64, 117, 251),
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.secondary,
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.picture_as_pdf, size: 100, color: Colors.white),
+                Icon(Icons.picture_as_pdf, size: 80, color: Colors.white),
                 const SizedBox(height: 24),
                 const Text(
                   'All Document Reader',

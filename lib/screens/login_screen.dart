@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import '../services/auth_service.dart';
+// import '../services/auth_service.dart';  // Uncomment when Firebase auth is implemented
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,9 +11,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final AuthService _authService = AuthService();
+  // final AuthService _authService = AuthService();  // Uncomment when Firebase auth is implemented
   String? _phone;
-  String? _verificationId;
+  // String? _verificationId;  // Uncomment when Firebase auth is implemented
   bool _codeSent = false;
   bool _loading = false;
 
@@ -59,21 +59,18 @@ class _LoginScreenState extends State<LoginScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-        Icon(Icons.picture_as_pdf, color: Colors.white),
-        const SizedBox(width: 8),
-        const Text(
-          'Sugum PDF',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-            color: Colors.white,
-          ),
-        ),
+            Icon(Icons.picture_as_pdf),
+            const SizedBox(width: 8),
+            const Text(
+              'Sugam PDF',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
           ],
         ),
         centerTitle: true,
-        elevation: 4,
-        backgroundColor: const Color.fromARGB(255, 58, 164, 183),
         // shape: const RoundedRectangleBorder(
         //   borderRadius: BorderRadius.vertical(
         // bottom: Radius.circular(24),
@@ -81,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // ),
         actions: [
           IconButton(
-        icon: const Icon(Icons.help_outline, color: Colors.white),
+        icon: Icon(Icons.help_outline, color: Theme.of(context).colorScheme.onPrimary),
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Need help? Contact support!')),
@@ -93,7 +90,10 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color.fromARGB(255, 58, 164, 183), const Color.fromARGB(255, 64, 117, 251)],
+            colors: [
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.secondary,
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -107,25 +107,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     // const SizedBox(height: 50, child: Placeholder(color: Colors.white)),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Login',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
                     if (!_codeSent)
                       IntlPhoneField(
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Mobile Number',
-                          labelStyle: TextStyle(color: Colors.white),
+                          labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary, width: 2),
                           ),
                         ),
                         initialCountryCode: 'IN',
@@ -135,22 +135,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (!_codeSent)
                       ElevatedButton(
                         onPressed: _sendOtp,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.deepPurple,
-                        ),
                         child: const Text('Send OTP'),
                       ),
                     if (_codeSent) ...[
                       Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            width: 2
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: OtpTextField(
                           numberOfFields: 6,
-                          borderColor: Colors.white,
+                          borderColor: Theme.of(context).colorScheme.onPrimary,
                           enabled: true,
                           onSubmit: _verifyOtp,
                           borderWidth: 2,
@@ -159,10 +158,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () => _verifyOtp(''),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.deepPurple,
-                        ),
                         child: const Text('Verify OTP'),
                       ),
                     ],
