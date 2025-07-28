@@ -71,19 +71,23 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
         centerTitle: true,
-        // shape: const RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.vertical(
-        // bottom: Radius.circular(24),
-        //   ),
-        // ),
         actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/home');
+            },
+            child: const Text('Skip'),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
           IconButton(
-        icon: Icon(Icons.help_outline, color: Theme.of(context).colorScheme.onPrimary),
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Need help? Contact support!')),
-          );
-        },
+            icon: Icon(Icons.help_outline, color: Theme.of(context).colorScheme.onPrimary),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Need help? Contact support!')),
+              );
+            },
           ),
         ],
       ),
