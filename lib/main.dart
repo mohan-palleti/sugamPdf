@@ -1,5 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Screens
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/user_info_screen.dart';
@@ -9,6 +12,13 @@ import 'screens/image_to_pdf_screen.dart';
 import 'screens/camera_to_pdf_screen.dart';
 import 'screens/pdf_viewer_screen.dart';
 import 'screens/file_manager_screen.dart';
+
+// BLoCs
+import 'blocs/pdf/pdf_bloc.dart';
+import 'blocs/file/file_bloc.dart';
+
+// Services
+import 'services/pdf_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,21 +65,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PDF Utility',
-      theme: globalTheme,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/user-info': (context) => const UserInfoScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/pdf-merge': (context) => const PdfMergeScreen(),
-        '/image-to-pdf': (context) => const ImageToPdfScreen(),
-        '/camera-to-pdf': (context) => const CameraToPdfScreen(),
-        '/pdf-viewer': (context) => const PdfViewerScreen(),
-        '/file-manager': (context) => const FileManagerScreen(),
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => PdfBloc(
+            pdfService: PdfService(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => FileBloc(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'PDF Utility',
+        theme: globalTheme,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const SplashScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/user-info': (context) => const UserInfoScreen(),
+          '/home': (context) => const HomeScreen(),
+          '/pdf-merge': (context) => const PdfMergeScreen(),
+          '/image-to-pdf': (context) => const ImageToPdfScreen(),
+          '/camera-to-pdf': (context) => const CameraToPdfScreen(),
+          '/pdf-viewer': (context) => const PdfViewerScreen(),
+          '/file-manager': (context) => const FileManagerScreen(),
+        },
+      ),
     );
   }
 }

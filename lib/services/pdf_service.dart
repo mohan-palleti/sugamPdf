@@ -7,9 +7,52 @@ import 'package:permission_handler/permission_handler.dart';
 
 class PdfService {
   Future<File> mergePdfs(List<File> pdfFiles, String outputName) async {
-    // TODO: Implement PDF merging logic
-    // Use the pdf package to merge pages
-    throw UnimplementedError();
+    if (pdfFiles.isEmpty) {
+      throw Exception('No PDF files provided for merging');
+    }
+
+    // Create a new PDF document
+    final pdf = pw.Document();
+
+    // Request storage permission early
+    final status = await Permission.storage.request();
+    if (!status.isGranted) {
+      throw Exception('Storage permission not granted');
+    }
+
+    // For each PDF file
+    for (final pdfFile in pdfFiles) {
+      try {
+        final bytes = await pdfFile.readAsBytes();
+        pdf.addPage(
+          pw.Page(
+            build: (context) {
+              return pw.Center(
+                child: pw.SizedBox(
+                  width: PdfPageFormat.a4.width,
+                  height: PdfPageFormat.a4.height,
+                  child: pw.FittedBox(
+                    child: pw.Image(
+                      pw.MemoryImage(bytes),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      } catch (e) {
+        throw Exception('Failed to process PDF file: ${pdfFile.path}\nError: $e');
+      }
+    }
+
+    try {
+      final outputFile = File(outputName);
+      await outputFile.writeAsBytes(await pdf.save());
+      return outputFile;
+    } catch (e) {
+      throw Exception('Failed to save merged PDF: $e');
+    }
   }
 
   Future<void> createPdfFromImages(List<File> images, String outputPath) async {

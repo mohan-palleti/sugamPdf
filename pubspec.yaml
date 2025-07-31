@@ -59,6 +59,10 @@ dependencies:
   flutter_otp_text_field: ^1.1.0
   intl_phone_field: ^3.1.0
   pdfx: ^2.4.0
+  
+  # State Management
+  flutter_bloc: ^8.1.4
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
