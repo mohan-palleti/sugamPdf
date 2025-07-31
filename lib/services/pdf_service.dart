@@ -12,6 +12,24 @@ class PdfService {
     throw UnimplementedError();
   }
 
+  Future<void> createPdfFromImages(List<File> images, String outputPath) async {
+    final pdf = pw.Document();
+
+    for (var imageFile in images) {
+      final image = pw.MemoryImage(imageFile.readAsBytesSync());
+      pdf.addPage(pw.Page(
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Image(image),
+          );
+        },
+      ));
+    }
+
+    final file = File(outputPath);
+    await file.writeAsBytes(await pdf.save());
+  }
+
   Future<File> imagesToPdf(List<File> images, String outputPath, {PdfPageFormat? pageFormat}) async {
     final pdf = pw.Document();
     for (var imageFile in images) {
