@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/file/file_bloc.dart';
 import '../blocs/file/file_event.dart';
 import '../blocs/file/file_state.dart';
+import '../screens/pdf_editor_screen.dart';
+import '../services/pdf_annotation_service.dart';
+import '../blocs/pdf_editor/pdf_editor_bloc.dart';
+import '../blocs/pdf_editor/pdf_editor_event.dart';
 
 class FileManagerScreen extends StatelessWidget {
   const FileManagerScreen({super.key});
@@ -227,10 +231,17 @@ class FileManagerScreen extends StatelessWidget {
   void _handleFileTap(BuildContext context, File file) {
     final extension = file.path.split('.').last.toLowerCase();
     if (extension == 'pdf') {
-      Navigator.pushNamed(
+      Navigator.push(
         context,
-        '/pdf-viewer',
-        arguments: file.path,
+        MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => PdfEditorBloc(
+              annotationService: PdfAnnotationService(),
+              pdfPath: file.path,
+            )..add(LoadPdfEditor(file.path)),
+            child: PdfEditorScreen(pdfPath: file.path),
+          ),
+        ),
       );
     }
   }

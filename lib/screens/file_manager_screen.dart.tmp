@@ -1,0 +1,17 @@
+  void _handleFileTap(BuildContext context, File file) {
+    final extension = file.path.split('.').last.toLowerCase();
+    if (extension == 'pdf') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => PdfEditorBloc(
+              annotationService: PdfAnnotationService(),
+              pdfPath: file.path,
+            )..add(LoadPdfEditor(file.path)),
+            child: PdfEditorScreen(pdfPath: file.path),
+          ),
+        ),
+      );
+    }
+  }

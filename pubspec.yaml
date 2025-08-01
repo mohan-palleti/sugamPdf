@@ -38,6 +38,8 @@ dependencies:
   # PDF and file utilities
   pdf: ^3.8.1
   printing: ^5.9.1
+  pdfx: ^2.4.0
+  perfect_freehand: ^1.0.4
   image_picker: ^1.1.2
   camera: ^0.11.1
   path_provider: ^2.0.11
@@ -58,7 +60,6 @@ dependencies:
   google_sign_in: ^7.1.0
   flutter_otp_text_field: ^1.1.0
   intl_phone_field: ^3.1.0
-  pdfx: ^2.4.0
   
   # State Management
   flutter_bloc: ^8.1.4
