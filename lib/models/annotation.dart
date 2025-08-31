@@ -29,7 +29,7 @@ class AnnotationData {
       'type': type.toString(),
       'points': points.map((p) => {'x': p.dx, 'y': p.dy}).toList(),
       'text': text,
-      'color': color.value,
+      'color': color.toARGB32(),
       'strokeWidth': strokeWidth,
       'pageNumber': pageNumber,
     };

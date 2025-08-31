@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../services/pdf_service.dart';
+import '../services/permissions_service.dart';
 import 'home_screen.dart';
 import 'image_editor_screen.dart';
 
@@ -18,7 +18,7 @@ class CameraToPdfScreen extends StatefulWidget {
 class _CameraToPdfScreenState extends State<CameraToPdfScreen> {
   CameraController? _controller;
   List<CameraDescription>? _cameras;
-  List<XFile> _capturedImages = [];
+  final List<XFile> _capturedImages = [];
   bool _isCameraInitialized = false;
   bool _isCreatingPdf = false;
 
@@ -29,8 +29,8 @@ class _CameraToPdfScreenState extends State<CameraToPdfScreen> {
   }
 
   Future<void> _initializeCamera() async {
-    final cameraStatus = await Permission.camera.request();
-    if (cameraStatus.isGranted) {
+    final hasPermission = await PermissionsService.requestCameraPermission(context);
+    if (hasPermission) {
       _cameras = await availableCameras();
       if (_cameras != null && _cameras!.isNotEmpty) {
         _controller = CameraController(
@@ -45,32 +45,7 @@ class _CameraToPdfScreenState extends State<CameraToPdfScreen> {
           });
         }
       }
-    } else {
-      _showPermissionDeniedDialog();
     }
-  }
-
-  void _showPermissionDeniedDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Permission Denied'),
-        content: const Text('Camera permission is required to use this feature. Please enable it in settings.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              openAppSettings();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -126,7 +101,7 @@ class _CameraToPdfScreenState extends State<CameraToPdfScreen> {
       final finalPath = '${downloadsDir.path}/$fileName.pdf';
 
       await pdfService.createPdfFromImages(imagesAsFiles, finalPath);
-
+      if (!mounted) return; 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('PDF saved successfully at $finalPath')),
       );

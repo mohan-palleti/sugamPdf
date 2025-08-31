@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../services/permissions_service.dart';
 import 'file_event.dart';
 import 'file_state.dart';
 
@@ -11,6 +12,17 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     on<CreateDirectory>(_onCreateDirectory);
     on<MoveFile>(_onMoveFile);
     on<RenameFile>(_onRenameFile);
+    on<CheckPermissions>(_onCheckPermissions);
+  }
+  
+  Future<void> _onCheckPermissions(CheckPermissions event, Emitter<FileState> emit) async {
+    emit(FileLoading());
+    final hasPermission = await PermissionsService.requestStoragePermission(event.context);
+    if (hasPermission) {
+      add(const LoadFiles());
+    } else {
+      emit(const FileError('Storage permission denied. Please grant storage permission to access files.'));
+    }
   }
 
   Future<void> _onLoadFiles(LoadFiles event, Emitter<FileState> emit) async {

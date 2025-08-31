@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+// import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ImageEditorScreen extends StatefulWidget {
@@ -14,7 +14,7 @@ class ImageEditorScreen extends StatefulWidget {
 
 class _ImageEditorScreenState extends State<ImageEditorScreen> {
   late File _imageFile;
-  bool _isProcessing = false;
+  final bool _isProcessing = false;
   int _rotationDegrees = 0;
   bool _isGrayscale = false;
   final GlobalKey _globalKey = GlobalKey();
@@ -65,7 +65,7 @@ class _ImageEditorScreenState extends State<ImageEditorScreen> {
     final tempDir = await getTemporaryDirectory();
     final newPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
     final savedFile = await _imageFile.copy(newPath);
-    Navigator.of(context).pop(savedFile.path);
+    if (mounted) Navigator.of(context).pop(savedFile.path);
   }
 
   void _applyFilter() {

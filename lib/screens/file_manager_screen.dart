@@ -5,7 +5,7 @@ import '../blocs/file/file_bloc.dart';
 import '../blocs/file/file_event.dart';
 import '../blocs/file/file_state.dart';
 import '../screens/pdf_editor_screen.dart';
-import '../services/pdf_annotation_service.dart';
+import '../services/app_services.dart';
 import '../blocs/pdf_editor/pdf_editor_bloc.dart';
 import '../blocs/pdf_editor/pdf_editor_event.dart';
 
@@ -27,7 +27,8 @@ class FileManagerScreen extends StatelessWidget {
       body: BlocBuilder<FileBloc, FileState>(
         builder: (context, state) {
           if (state is FileInitial) {
-            context.read<FileBloc>().add(const LoadFiles());
+            // First check for permissions, then load files
+            context.read<FileBloc>().add(CheckPermissions(context));
             return const Center(child: CircularProgressIndicator());
           }
           
@@ -43,7 +44,7 @@ class FileManagerScreen extends StatelessWidget {
                   Text(state.message, style: const TextStyle(color: Colors.red)),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.read<FileBloc>().add(const LoadFiles()),
+                    onPressed: () => context.read<FileBloc>().add(CheckPermissions(context)),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -236,7 +237,7 @@ class FileManagerScreen extends StatelessWidget {
         MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) => PdfEditorBloc(
-              annotationService: PdfAnnotationService(),
+              annotationService: services.annotationService,
               pdfPath: file.path,
             )..add(LoadPdfEditor(file.path)),
             child: PdfEditorScreen(pdfPath: file.path),

@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 abstract class FileEvent extends Equatable {
   const FileEvent();
@@ -46,6 +46,15 @@ class MoveFile extends FileEvent {
 
   @override
   List<Object> get props => [sourcePath, destinationPath];
+}
+
+class CheckPermissions extends FileEvent {
+  final BuildContext context;
+  
+  const CheckPermissions(this.context);
+  
+  @override
+  List<Object> get props => [context];
 }
 
 class RenameFile extends FileEvent {

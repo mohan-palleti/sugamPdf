@@ -1,16 +1,16 @@
 import "dart:io";
 import "package:flutter/material.dart";
 
-class ImageEditorScreen extends StatefulWidget {
+class BasicImageEditorScreen extends StatefulWidget {
   final String imagePath;
 
-  const ImageEditorScreen({super.key, required this.imagePath});
+  const BasicImageEditorScreen({super.key, required this.imagePath});
 
   @override
-  State<ImageEditorScreen> createState() => _ImageEditorScreenState();
+  State<BasicImageEditorScreen> createState() => _BasicImageEditorScreenState();
 }
 
-class _ImageEditorScreenState extends State<ImageEditorScreen> {
+class _BasicImageEditorScreenState extends State<BasicImageEditorScreen> {
   late File _imageFile;
   bool _isProcessing = false;
   int _rotationDegrees = 0;

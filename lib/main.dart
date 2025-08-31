@@ -9,8 +9,11 @@ import 'screens/user_info_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/pdf_merge_screen.dart';
 import 'screens/image_to_pdf_screen.dart';
-import 'screens/camera_to_pdf_screen.dart';
+import 'screens/camera_to_pdf_screen.dart'; 
 import 'screens/pdf_viewer_screen.dart';
+import 'screens/page_operations_screen.dart';
+import 'screens/pdf_compress_screen.dart';
+import 'screens/pdf_split_screen.dart';
 import 'screens/file_manager_screen.dart';
 
 // BLoCs
@@ -19,6 +22,7 @@ import 'blocs/file/file_bloc.dart';
 
 // Services
 import 'services/pdf_service.dart';
+import 'theme/app_theme_extension.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,39 +33,39 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  static final ThemeData globalTheme = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.light(
-      primary: Color(0xFF2E6F40),     // Dark green
-      secondary: Color(0xFF68BA7F),    // Medium green
-      surface: Color(0xFFCFFFDC),      // Light mint
+  static ThemeData _buildTheme() {
+    const primary = Color(0xFF2E6F40);
+    const secondary = Color(0xFF68BA7F);
+    const surface = Color(0xFFCFFFDC);
+    const scheme = ColorScheme.light(
+      primary: primary,
+      secondary: secondary,
+      surface: surface,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: Colors.black87,
-    ),
-    appBarTheme: AppBarTheme(
-      backgroundColor: Color(0xFF2E6F40),
-      foregroundColor: Colors.white,
-      elevation: 0,
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF68BA7F),
+    );
+    final ext = AppStyles.create(scheme);
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: primary,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        elevation: 0,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(style: ext.primaryButton),
+      snackBarTheme: ext.snackBarTheme,
+      cardTheme: const CardThemeData(
+        color: surface,
+        elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
-    ),
-    cardTheme: CardThemeData(
-      color: Color(0xFFCFFFDC),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  );
+      extensions: [ext],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +82,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'PDF Utility',
-        theme: globalTheme,
+  theme: _buildTheme(),
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),
@@ -90,6 +94,30 @@ class MyApp extends StatelessWidget {
           '/camera-to-pdf': (context) => const CameraToPdfScreen(),
           '/pdf-viewer': (context) => const PdfViewerScreen(),
           '/file-manager': (context) => const FileManagerScreen(),
+          '/page_ops': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            final path = args?['pdfPath'] as String?;
+            if (path == null) {
+              return const Scaffold(body: Center(child: Text('No PDF path provided')));
+            }
+            return PageOperationsScreen(pdfPath: path);
+          },
+          '/compress': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            final path = args?['pdfPath'] as String?;
+            if (path == null) {
+              return const Scaffold(body: Center(child: Text('No PDF path provided')));
+            }
+            return PdfCompressScreen(pdfPath: path);
+          },
+          '/split': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+            final path = args?['pdfPath'] as String?;
+            if (path == null) {
+              return const Scaffold(body: Center(child: Text('No PDF path provided')));
+            }
+            return PdfSplitScreen(pdfPath: path);
+          },
         },
       ),
     );

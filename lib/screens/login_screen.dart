@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import '../services/utilities.dart';
 // import '../services/auth_service.dart';  // Uncomment when Firebase auth is implemented
 
 class LoginScreen extends StatefulWidget {
@@ -29,12 +30,12 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } catch (e) {
       setState(() => _loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to send OTP')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to send OTP')));
     }
   }
 
   void _verifyOtp(String code) async {
-    print('Verifying OTP: $code');
+    appLog('Verifying OTP: $code');
     // if (_verificationId == null) return;
     setState(() => _loading = true);
     try {
@@ -44,7 +45,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _onLoginSuccess();
     } catch (e) {
       setState(() => _loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Invalid OTP')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invalid OTP')));
+      }
     }
   }
 
@@ -56,12 +59,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
+        title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.picture_as_pdf),
-            const SizedBox(width: 8),
-            const Text(
+            SizedBox(width: 8),
+            Text(
               'Sugam PDF',
               style: TextStyle(
                 fontWeight: FontWeight.bold,

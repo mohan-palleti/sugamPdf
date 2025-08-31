@@ -45,5 +45,27 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	
+	<!-- Camera permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to camera to capture documents and convert them to PDF</string>
+	
+	<!-- Photo library permissions -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to photo library to select images to convert to PDF</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save PDFs to your photo library</string>
+	
+	<!-- Files and document permissions -->
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	
+	<!-- Microphone permission (if using camera with audio) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to microphone when using the camera</string>
 </dict>
 </plist>

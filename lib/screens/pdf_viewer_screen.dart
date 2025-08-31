@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import '../services/permissions_service.dart';
 
 class PdfViewerScreen extends StatefulWidget {
   const PdfViewerScreen({super.key});
@@ -22,7 +22,8 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   }
 
   Future<void> _loadPdfFiles() async {
-    if (await Permission.storage.request().isGranted) {
+    final hasPermission = await PermissionsService.requestStoragePermission(context);
+    if (hasPermission) {
       final directory = await getExternalStorageDirectory();
       if (directory != null) {
         final files = directory.listSync(recursive: true, followLinks: false);
@@ -38,9 +39,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
       setState(() {
         _loading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Storage permission denied')),
-      );
+      // Permission dialog is already handled by PermissionsService
     }
   }
 
@@ -81,7 +80,20 @@ class PdfDisplayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(pdfFile.path.split('/').last)),
+      appBar: AppBar(
+        title: Text(pdfFile.path.split('/').last),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_note),
+            tooltip: 'Page operations',
+            onPressed: () => Navigator.pushNamed(
+              context,
+              '/page_ops',
+              arguments: {'pdfPath': pdfFile.path},
+            ),
+          ),
+        ],
+      ),
       body: PDFView(
         filePath: pdfFile.path,
       ),

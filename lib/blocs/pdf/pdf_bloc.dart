@@ -59,7 +59,7 @@ class PdfBloc extends Bloc<PdfEvent, PdfState> {
   Future<void> _onMergePdfs(MergePdfs event, Emitter<PdfState> emit) async {
     emit(PdfLoading());
     try {
-      await _pdfService.mergePdfs(event.pdfs, event.outputPath);
+      await _pdfService.mergePdfs(event.pdfs, event.outputPath, context: event.context);
       final directory = await getApplicationDocumentsDirectory();
       final pdfs = await _listPdfsInDirectory(directory);
       emit(PdfLoaded(pdfs: pdfs, currentPdfPath: event.outputPath));

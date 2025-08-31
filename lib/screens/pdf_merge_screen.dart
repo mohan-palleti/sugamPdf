@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/pdf_service.dart';
+import '../services/app_services.dart';
+import '../services/utilities.dart';
 
 class PdfMergeScreen extends StatefulWidget {
   const PdfMergeScreen({super.key});
@@ -11,7 +13,7 @@ class PdfMergeScreen extends StatefulWidget {
 }
 
 class _PdfMergeScreenState extends State<PdfMergeScreen> {
-  final PdfService _pdfService = PdfService();
+  final PdfService _pdfService = services.pdfService;
   List<File> _selectedPdfs = [];
   bool _loading = false;
   String? _resultPath;
@@ -29,7 +31,7 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
     if (_selectedPdfs.isEmpty) return;
     setState(() => _loading = true);
     try {
-      final merged = await _pdfService.mergePdfs(_selectedPdfs, 'merged_output');
+      final merged = await _pdfService.mergePdfs(_selectedPdfs, 'merged_output', context: context);
       setState(() {
         _resultPath = merged.path;
         _loading = false;
@@ -40,7 +42,8 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      appLog('Merge failed', error: e, stackTrace: st);
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to merge PDFs')));
     }

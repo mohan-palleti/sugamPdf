@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 abstract class PdfEvent extends Equatable {
   const PdfEvent();
@@ -31,14 +32,16 @@ class DeletePdf extends PdfEvent {
 class MergePdfs extends PdfEvent {
   final List<File> pdfs;
   final String outputPath;
+  final BuildContext? context;
 
   const MergePdfs({
     required this.pdfs,
     required this.outputPath,
+    this.context,
   });
 
   @override
-  List<Object> get props => [pdfs, outputPath];
+  List<Object?> get props => [pdfs, outputPath, context];
 }
 
 class OpenPdf extends PdfEvent {

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdfx/pdfx.dart';
@@ -13,9 +12,9 @@ class PdfEditorScreen extends StatefulWidget {
   final String pdfPath;
   
   const PdfEditorScreen({
-    Key? key,
+    super.key,
     required this.pdfPath,
-  }) : super(key: key);
+  });
 
   @override
   State<PdfEditorScreen> createState() => _PdfEditorScreenState();
@@ -65,35 +64,6 @@ class _PdfEditorScreenState extends State<PdfEditorScreen> {
     });
   }
 
-  void _onPanStart(DragStartDetails details) {
-    setState(() {
-      _currentPoints = [details.localPosition];
-    });
-  }
-
-  void _onPanUpdate(DragUpdateDetails details) {
-    setState(() {
-      _currentPoints.add(details.localPosition);
-    });
-  }
-
-  void _onPanEnd(DragEndDetails details) {
-    if (_currentPoints.isNotEmpty) {
-      final annotation = AnnotationData(
-        type: _currentTool,
-        points: List.from(_currentPoints),
-        color: _currentColor,
-        strokeWidth: _currentStrokeWidth,
-        pageNumber: _currentPage,
-      );
-      
-      context.read<PdfEditorBloc>().add(AddAnnotation(annotation));
-      
-      setState(() {
-        _currentPoints = [];
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +100,7 @@ class _PdfEditorScreenState extends State<PdfEditorScreen> {
                   setState(() {
                     _currentPage = page;
                   });
+                  context.read<PdfEditorBloc>().add(ChangeCurrentPage(page));
                 },
               ),
               if (_currentPoints.isNotEmpty)
@@ -139,19 +110,27 @@ class _PdfEditorScreenState extends State<PdfEditorScreen> {
                   strokeWidth: _currentStrokeWidth,
                   type: _currentTool,
                 ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: AnnotationToolbar(
-                  selectedTool: _currentTool,
-                  selectedColor: _currentColor,
-                  strokeWidth: _currentStrokeWidth,
-                  onToolSelected: _onToolSelected,
-                  onColorSelected: _onColorSelected,
-                  onStrokeWidthChanged: _onStrokeWidthChanged,
+              if (state is! PdfEditorLoading)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: AnnotationToolbar(
+                    selectedTool: _currentTool,
+                    selectedColor: _currentColor,
+                    strokeWidth: _currentStrokeWidth,
+                    onToolSelected: _onToolSelected,
+                    onColorSelected: _onColorSelected,
+                    onStrokeWidthChanged: _onStrokeWidthChanged,
+                  ),
                 ),
-              ),
+              if (state is PdfEditorLoading)
+                Container(
+                  color: Colors.black45,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
             ],
           );
         },

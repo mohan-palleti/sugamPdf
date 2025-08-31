@@ -27,10 +27,22 @@ class PdfEditorBloc extends Bloc<PdfEditorEvent, PdfEditorState> {
     LoadPdfEditor event,
     Emitter<PdfEditorState> emit,
   ) {
-    emit(PdfEditorLoaded(
-      annotations: _annotations,
-      currentPage: _currentPage,
-    ));
+    // Load persisted annotations asynchronously then emit
+    emit(PdfEditorLoading());
+    _annotationService.loadPersistedAnnotations(pdfPath).then((loaded) {
+      _annotations
+        ..clear()
+        ..addAll(loaded);
+      emit(PdfEditorLoaded(
+        annotations: List.unmodifiable(_annotations),
+        currentPage: _currentPage,
+      ));
+    }).catchError((_) {
+      emit(PdfEditorLoaded(
+        annotations: List.unmodifiable(_annotations),
+        currentPage: _currentPage,
+      ));
+    });
   }
 
   void _onAddAnnotation(
@@ -38,8 +50,10 @@ class PdfEditorBloc extends Bloc<PdfEditorEvent, PdfEditorState> {
     Emitter<PdfEditorState> emit,
   ) {
     _annotations.add(event.annotation);
+    // Persist in background (fire and forget)
+    _annotationService.persistAnnotations(pdfPath, _annotations);
     emit(PdfEditorLoaded(
-      annotations: _annotations,
+      annotations: List.unmodifiable(_annotations),
       currentPage: _currentPage,
     ));
   }
@@ -50,8 +64,9 @@ class PdfEditorBloc extends Bloc<PdfEditorEvent, PdfEditorState> {
   ) {
     if (_annotations.isNotEmpty) {
       _annotations.removeLast();
+      _annotationService.persistAnnotations(pdfPath, _annotations);
       emit(PdfEditorLoaded(
-        annotations: _annotations,
+        annotations: List.unmodifiable(_annotations),
         currentPage: _currentPage,
       ));
     }
@@ -68,6 +83,8 @@ class PdfEditorBloc extends Bloc<PdfEditorEvent, PdfEditorState> {
         annotations: _annotations,
         outputPath: event.outputPath,
       );
+  // Persist after successful embed
+  await _annotationService.persistAnnotations(pdfPath, _annotations);
       emit(AnnotationsSaved(outputFile.path));
     } catch (e) {
       emit(PdfEditorError('Failed to save annotations: $e'));
@@ -80,7 +97,7 @@ class PdfEditorBloc extends Bloc<PdfEditorEvent, PdfEditorState> {
   ) {
     _currentPage = event.pageNumber;
     emit(PdfEditorLoaded(
-      annotations: _annotations,
+  annotations: List.unmodifiable(_annotations),
       currentPage: _currentPage,
     ));
   }

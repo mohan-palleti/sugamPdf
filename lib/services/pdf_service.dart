@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:image/image.dart' as img;
-import 'package:permission_handler/permission_handler.dart';
+import 'permissions_service.dart';
+import 'utilities.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PdfService {
-  Future<File> mergePdfs(List<File> pdfFiles, String outputName) async {
+  Future<File> mergePdfs(List<File> pdfFiles, String outputName, {BuildContext? context}) async {
     if (pdfFiles.isEmpty) {
       throw Exception('No PDF files provided for merging');
     }
@@ -14,10 +17,12 @@ class PdfService {
     // Create a new PDF document
     final pdf = pw.Document();
 
-    // Request storage permission early
-    final status = await Permission.storage.request();
-    if (!status.isGranted) {
-      throw Exception('Storage permission not granted');
+    // Request storage permission early if context is provided
+    if (context != null) {
+      final hasPermission = await PermissionsService.requestStoragePermission(context);
+      if (!hasPermission) {
+        throw Exception('Storage permission not granted');
+      }
     }
 
     // For each PDF file
@@ -47,7 +52,11 @@ class PdfService {
     }
 
     try {
-      final outputFile = File(outputName);
+      // Determine safe directory & sanitized name
+      final baseDir = await getApplicationDocumentsDirectory();
+      final appDir = await getOrCreateAppDataDir(baseDir);
+      final safeName = sanitizeFileName(outputName.endsWith('.pdf') ? outputName : '$outputName.pdf');
+      final outputFile = File('${appDir.path}/$safeName');
       await outputFile.writeAsBytes(await pdf.save());
       return outputFile;
     } catch (e) {
@@ -91,14 +100,16 @@ class PdfService {
       }
     }
 
-    // Request storage permission
-    final status = await Permission.storage.request();
-    if (!status.isGranted) {
-      throw Exception('Storage permission not granted');
-    }
+    // Storage permissions should already be checked with the context parameter
+    // If we got this far, we assume permissions are granted
 
     // Use the exact path provided
-    final file = File(outputPath);
+  final baseDir = await getApplicationDocumentsDirectory();
+  final appDir = await getOrCreateAppDataDir(baseDir);
+  final safeName = sanitizeFileName(outputPath.split('/').last.endsWith('.pdf')
+    ? outputPath.split('/').last
+    : '${outputPath.split('/').last}.pdf');
+  final file = File('${appDir.path}/$safeName');
     await file.writeAsBytes(await pdf.save());
     return file;
   }
