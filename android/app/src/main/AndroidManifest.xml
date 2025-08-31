@@ -12,7 +12,6 @@
                      android:maxSdkVersion="29" 
                      tools:replace="android:maxSdkVersion" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     
     <!-- For Android 13+ specifically for PDF files -->
