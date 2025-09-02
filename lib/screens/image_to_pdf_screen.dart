@@ -53,8 +53,8 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
   }
 
   Future<void> _pickImages() async {
-    final hasPermission = await PermissionsService.requestStoragePermission(context);
-    if (hasPermission) {
+  final perm = await PermissionsService.requestImagesAccess();
+  if (perm == PermissionRequestResult.granted) {
       final picker = ImagePicker();
       final picked = await picker.pickMultiImage();
       if (picked.isNotEmpty) {

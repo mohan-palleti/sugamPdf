@@ -40,8 +40,8 @@ class PageOpsBloc extends Bloc<PageOpsEvent, PageOpsState> {
         pdfPath: e.pdfPath,
         thumbs: thumbs,
         workingOrder: [for (int i=1;i<=pages;i++) i],
-        rotations: {},
-        deletions: {},
+        rotations: const {},
+        deletions: const {},
       ));
     } catch (err) {
       emit(PageOpsError('Failed to load thumbnails: $err'));
@@ -75,7 +75,7 @@ class PageOpsBloc extends Bloc<PageOpsEvent, PageOpsState> {
   Future<void> _onApply(ApplyPageOps e, Emitter<PageOpsState> emit) async {
     final st = state;
     if (st is! PageOpsLoaded) return;
-    emit(PageOpsProgress(0, 'start'));
+    emit(const PageOpsProgress(0, 'start'));
     try {
       // build final sequence excluding deletions
       final sequence = st.workingOrder.where((p) => !st.deletions.contains(p)).toList();
@@ -99,7 +99,7 @@ class PageOpsBloc extends Bloc<PageOpsEvent, PageOpsState> {
   Future<void> _onSplit(SplitPdfEvent e, Emitter<PageOpsState> emit) async {
     final st = state;
     if (st is! PageOpsLoaded) return;
-    emit(PageOpsProgress(0, 'split start'));
+    emit(const PageOpsProgress(0, 'split start'));
     try {
       final ranges = e.ranges.map((r)=> PageRange(r[0], r[1])).toList();
       _cancelRequested = false;
@@ -117,7 +117,7 @@ class PageOpsBloc extends Bloc<PageOpsEvent, PageOpsState> {
   Future<void> _onCompress(CompressPdfEvent e, Emitter<PageOpsState> emit) async {
     final st = state;
     if (st is! PageOpsLoaded) return;
-    emit(PageOpsProgress(0, 'compress start'));
+    emit(const PageOpsProgress(0, 'compress start'));
     try {
       _cancelRequested = false;
       final file = await _svc.compressPdf(
@@ -144,7 +144,7 @@ class PageOpsBloc extends Bloc<PageOpsEvent, PageOpsState> {
 }
 
 class _InternalProgress extends PageOpsEvent {
-  final double progress; final String stage; _InternalProgress(this.progress,this.stage);
+  final double progress; final String stage; const _InternalProgress(this.progress,this.stage);
   @override
   List<Object?> get props => [progress, stage];
 }

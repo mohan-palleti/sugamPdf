@@ -48,7 +48,7 @@ class PageOpsLoaded extends PageOpsState {
 class PageOpsProgress extends PageOpsState {
   final double progress; // 0-1
   final String stage;
-  PageOpsProgress(this.progress, this.stage);
+  const PageOpsProgress(this.progress, this.stage);
   @override
   List<Object?> get props => [progress, stage];
 }

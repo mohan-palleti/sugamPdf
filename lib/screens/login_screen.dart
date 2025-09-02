@@ -79,10 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/home');
             },
-            child: const Text('Skip'),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.onPrimary,
             ),
+            child: const Text('Skip'),
           ),
           IconButton(
             icon: Icon(Icons.help_outline, color: Theme.of(context).colorScheme.onPrimary),

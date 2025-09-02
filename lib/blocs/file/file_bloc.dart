@@ -17,8 +17,8 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   
   Future<void> _onCheckPermissions(CheckPermissions event, Emitter<FileState> emit) async {
     emit(FileLoading());
-    final hasPermission = await PermissionsService.requestStoragePermission(event.context);
-    if (hasPermission) {
+  final perm = await PermissionsService.requestImagesAccess();
+  if (perm == PermissionRequestResult.granted) {
       add(const LoadFiles());
     } else {
       emit(const FileError('Storage permission denied. Please grant storage permission to access files.'));

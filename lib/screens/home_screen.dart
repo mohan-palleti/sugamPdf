@@ -27,8 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadPdfFiles() async {
     setState(() => _loading = true);
     try {
-      final hasPermission = await PermissionsService.requestStoragePermission(context);
-      if (!hasPermission) {
+  final perm = await PermissionsService.requestImagesAccess();
+  if (perm != PermissionRequestResult.granted) {
         setState(() => _loading = false);
         return;
       }

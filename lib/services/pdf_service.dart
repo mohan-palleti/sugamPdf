@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:image/image.dart' as img;
-import 'permissions_service.dart';
 import 'utilities.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -18,12 +17,7 @@ class PdfService {
     final pdf = pw.Document();
 
     // Request storage permission early if context is provided
-    if (context != null) {
-      final hasPermission = await PermissionsService.requestStoragePermission(context);
-      if (!hasPermission) {
-        throw Exception('Storage permission not granted');
-      }
-    }
+  // Caller should ensure permissions granted beforehand.
 
     // For each PDF file
     for (final pdfFile in pdfFiles) {

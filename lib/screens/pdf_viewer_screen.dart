@@ -22,8 +22,8 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   }
 
   Future<void> _loadPdfFiles() async {
-    final hasPermission = await PermissionsService.requestStoragePermission(context);
-    if (hasPermission) {
+  final perm = await PermissionsService.requestImagesAccess();
+  if (perm == PermissionRequestResult.granted) {
       final directory = await getExternalStorageDirectory();
       if (directory != null) {
         final files = directory.listSync(recursive: true, followLinks: false);

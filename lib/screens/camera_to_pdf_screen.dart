@@ -29,8 +29,8 @@ class _CameraToPdfScreenState extends State<CameraToPdfScreen> {
   }
 
   Future<void> _initializeCamera() async {
-    final hasPermission = await PermissionsService.requestCameraPermission(context);
-    if (hasPermission) {
+  final cam = await PermissionsService.requestCamera();
+  if (cam == PermissionRequestResult.granted) {
       _cameras = await availableCameras();
       if (_cameras != null && _cameras!.isNotEmpty) {
         _controller = CameraController(

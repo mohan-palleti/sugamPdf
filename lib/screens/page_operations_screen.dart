@@ -107,7 +107,11 @@ class _PageOpsViewState extends State<_PageOpsView> {
                   rotation: state.rotations[state.workingOrder[i]] ?? 0,
                   onTap: () {
                     setState(() {
-                      if (_selected.contains(state.workingOrder[i])) _selected.remove(state.workingOrder[i]); else _selected.add(state.workingOrder[i]);
+                      if (_selected.contains(state.workingOrder[i])) {
+                        _selected.remove(state.workingOrder[i]);
+                      } else {
+                        _selected.add(state.workingOrder[i]);
+                      }
                     });
                   },
                 )

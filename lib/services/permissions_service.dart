@@ -1,108 +1,63 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+/// Enum describing the outcome of a permission request.
+enum PermissionRequestResult {
+  granted,
+  denied,
+  permanentlyDenied,
+  error,
+}
+
 class PermissionsService {
-  /// Request camera permission
-  static Future<bool> requestCameraPermission(BuildContext context) async {
+  // Public API (no BuildContext)
+  static Future<PermissionRequestResult> requestCamera() async {
     final status = await Permission.camera.request();
-    return _handlePermissionStatus(status, 'Camera', context);
+    return _map(status);
   }
 
-  /// Request storage permissions based on platform and Android version
-  static Future<bool> requestStoragePermission(BuildContext context) async {
+  static Future<PermissionRequestResult> requestImagesAccess() async {
     if (Platform.isAndroid) {
-      // For Android 13+ (API 33+)
-      if (await _isAndroid13OrHigher()) {
-        // For Photos and Videos
-        final photosStatus = await Permission.photos.request();
-        final videosStatus = await Permission.videos.request();
-        // For PDF files
-        final documentStatus = await Permission.mediaLibrary.request();
-
-        // All permissions must be granted
-        return _handlePermissionStatus(photosStatus, 'Photos', context) &&
-               _handlePermissionStatus(videosStatus, 'Videos', context) &&
-               _handlePermissionStatus(documentStatus, 'Documents', context);
-      } else {
-        // For Android 12 or lower
-        final status = await Permission.storage.request();
-        return _handlePermissionStatus(status, 'Storage', context);
+      final sdk = await _androidSdk();
+      // For Android 13+ (SDK 33) we must request READ_MEDIA_IMAGES via Permission.photos
+      if (sdk >= 33) {
+        final status = await Permission.photos.request();
+        return _map(status);
       }
+      // For Android 12 and below still use legacy external storage (declared with maxSdkVersion)
+      final legacy = await Permission.storage.request();
+      return _map(legacy);
     } else if (Platform.isIOS) {
-      final status = await Permission.photos.request();
-      return _handlePermissionStatus(status, 'Photos', context);
+      final photos = await Permission.photos.request();
+      return _map(photos);
     }
-    return false;
+    return PermissionRequestResult.error;
   }
 
-  /// Check if device is running Android 13 (API level 33) or higher
-  static Future<bool> _isAndroid13OrHigher() async {
-    if (Platform.isAndroid) {
-      final sdkInt = await _getAndroidSdkVersion();
-      return sdkInt >= 33; // Android 13 is API level 33
-    }
-    return false;
+  // Mapping
+  static PermissionRequestResult _map(PermissionStatus status) {
+    if (status.isGranted || status.isLimited) return PermissionRequestResult.granted;
+    if (status.isPermanentlyDenied || status.isRestricted) return PermissionRequestResult.permanentlyDenied;
+    if (status.isDenied) return PermissionRequestResult.denied;
+    return PermissionRequestResult.error;
   }
 
-  /// Get Android SDK version
-  static Future<int> _getAndroidSdkVersion() async {
+  static Future<int> _androidSdk() async {
+    if (!Platform.isAndroid) return 0;
     try {
-      // This is a simple way to get SDK version, but in a real app,
-      // you might use a method channel or a package like device_info_plus
-      return int.parse(Platform.operatingSystemVersion.split(' ').last);
-    } catch (e) {
-      debugPrint('Failed to get Android SDK version: $e');
+      final os = Platform.operatingSystemVersion; // e.g. "Android 13 (SDK 33)" or "Android 14 (U)"
+      final sdkMatch = RegExp(r'SDK\s+(\d+)').firstMatch(os);
+      if (sdkMatch != null) {
+        return int.parse(sdkMatch.group(1)!);
+      }
+      // Fallback: pick the largest integer in the string (likely the SDK)
+      final nums = RegExp(r'\d+').allMatches(os).map((m) => int.parse(m.group(0)!)).toList();
+      if (nums.isNotEmpty) {
+        return nums.reduce((a, b) => a > b ? a : b);
+      }
+      return 0;
+    } catch (_) {
       return 0;
     }
-  }
-
-  /// Handle permission status and show dialog if needed
-  static bool _handlePermissionStatus(
-    PermissionStatus status,
-    String permissionName,
-    BuildContext context,
-  ) {
-    switch (status) {
-      case PermissionStatus.granted:
-      case PermissionStatus.limited:
-        return true;
-      case PermissionStatus.denied:
-      case PermissionStatus.restricted:
-      case PermissionStatus.permanentlyDenied:
-        _showPermissionDeniedDialog(permissionName, context);
-        return false;
-      default:
-        return false;
-    }
-  }
-
-  /// Show a dialog explaining why the permission is needed and how to enable it
-  static void _showPermissionDeniedDialog(
-    String permissionName,
-    BuildContext context,
-  ) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('$permissionName Permission Required'),
-        content: Text(
-            'To use this feature, we need $permissionName permission. '
-            'Please enable it in app settings.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              openAppSettings();
-            },
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
-    );
   }
 }
